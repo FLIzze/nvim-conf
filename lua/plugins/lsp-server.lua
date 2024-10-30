@@ -16,17 +16,32 @@ return {
         },
         config = function()
             local lsp = require('lsp-zero')
-            local cmp = require('cmp')
 
+            -- Configure Mason
+            require('mason').setup()
+
+            -- Configure Mason LSPConfig
+            require('mason-lspconfig').setup({
+                ensure_installed = {
+                    'html',
+                    'cssls',
+                    'pyright',
+                    'rust_analyzer',
+                    'ts_ls',
+                    'eslint', -- Optional: ESLint for JS/TS linting
+                },
+            })
+
+            -- Use lsp-zero to set up the recommended preset
             lsp.preset('recommended')
 
-            -- Setup nvim-cmp
+            -- Set up nvim-cmp for completion
             lsp.setup_nvim_cmp({
                 mapping = {
-                    ['<C-n>'] = cmp.mapping.select_next_item(),
-                    ['<C-p>'] = cmp.mapping.select_prev_item(),
-                    ['<C-Space>'] = cmp.mapping.complete(),
-                    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+                    ['<C-n>'] = require('cmp').mapping.select_next_item(),
+                    ['<C-p>'] = require('cmp').mapping.select_prev_item(),
+                    ['<C-Space>'] = require('cmp').mapping.complete(),
+                    ['<CR>'] = require('cmp').mapping.confirm({ select = true }),
                 },
                 sources = {
                     { name = 'nvim_lsp' },
@@ -36,12 +51,15 @@ return {
                 },
             })
 
+            -- Set up LSP on_attach function
             lsp.on_attach(function(client, bufnr)
                 local opts = { noremap=true, silent=true }
                 vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
                 vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+                -- Optionally add more key mappings here
             end)
 
+            -- Call the setup method to finalize configuration
             lsp.setup()
         end,
     },
