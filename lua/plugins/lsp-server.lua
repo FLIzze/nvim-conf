@@ -28,6 +28,7 @@ return {
                     'pyright',
                     'rust_analyzer',
                     'ts_ls',
+                    'gopls',
                     'eslint', -- Optional: ESLint for JS/TS linting
                 },
             })
