@@ -24,6 +24,7 @@ return {
             require('mason-lspconfig').setup({
                 ensure_installed = {
                     'html',
+                    'htmx',
                     'cssls',
                     'pyright',
                     'rust_analyzer',
