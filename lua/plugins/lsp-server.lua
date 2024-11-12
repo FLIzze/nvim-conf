@@ -23,14 +23,8 @@ return {
             -- Configure Mason LSPConfig
             require('mason-lspconfig').setup({
                 ensure_installed = {
-                    'html',
-                    'htmx',
-                    'cssls',
-                    'pyright',
-                    'rust_analyzer',
-                    'ts_ls',
-                    'gopls',
-                    'eslint', -- Optional: ESLint for JS/TS linting
+                    'html', 'htmx', 'cssls', 'pyright', 'rust_analyzer', 
+                    'ts_ls', 'gopls', 'eslint', -- Optional: ESLint for JS/TS linting
                 },
             })
 
@@ -39,11 +33,19 @@ return {
 
             -- Set up nvim-cmp for completion
             lsp.setup_nvim_cmp({
+                completion = {
+                    completeopt = 'menuone,noinsert,noselect', -- Disable space after completion
+                },
                 mapping = {
                     ['<C-n>'] = require('cmp').mapping.select_next_item(),
                     ['<C-p>'] = require('cmp').mapping.select_prev_item(),
                     ['<C-Space>'] = require('cmp').mapping.complete(),
-                    ['<CR>'] = require('cmp').mapping.confirm({ select = true }),
+                    -- Disable autocomplete confirmation with <CR> or <Enter>
+                    ['<CR>'] = function()
+                        -- Simply add a newline on Enter (does nothing with LSP or completion)
+                        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "n", true)
+                    end,
+                    ['<C-k>'] = require('cmp').mapping.confirm({ select = true }),
                 },
                 sources = {
                     { name = 'nvim_lsp' },
@@ -55,13 +57,14 @@ return {
 
             -- Set up LSP on_attach function
             lsp.on_attach(function(client, bufnr)
-                local opts = { noremap=true, silent=true }
-                vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-                vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-                -- Optionally add more key mappings here
+                local opts = { noremap = true, silent = true }
+                -- Default keybinding for LSP definitions (can be customized)
+                vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)  -- Go to definition
+                vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)        -- Hover action
+                -- You can add more key mappings for LSP here as needed
             end)
 
-            -- Call the setup method to finalize configuration
+            -- Finalize LSP setup
             lsp.setup()
         end,
     },
