@@ -1,28 +1,38 @@
 return {
-    'nvim-telescope/telescope.nvim',
-    tag = '0.1.8',
-    dependencies = { 'nvim-lua/plenary.nvim' },
-    config = function()
-        require('telescope').setup {
-            defaults = {
-                -- Your default configuration here, if any
-            }
-        }
+  'nvim-telescope/telescope.nvim',
+  tag = '0.1.8',
+  dependencies = {
+    'nvim-lua/plenary.nvim',
+    'debugloop/telescope-undo.nvim' -- Add the undo extension here
+  },
+  config = function()
+    -- Set up Telescope
+    require('telescope').setup {
+      defaults = {
+        -- Your default configuration here, if any
+      }
+    }
 
-        -- Set up key mappings for Telescope
-        local builtin = require('telescope.builtin')
+    -- Load the undo extension
+    require('telescope').load_extension('undo')
 
-        vim.keymap.set('n', '<leader>pf', builtin.find_files, { desc = 'Telescope find files' })
-        vim.keymap.set('n', '<C-p>', builtin.git_files, { desc = 'Telescope find git files' })
+    -- Key mappings
+    local builtin = require('telescope.builtin')
 
-        -- Modify the 'ps' keybinding to only search within Git-tracked files
-        vim.keymap.set('n', '<leader>ps', function()
-            -- Grep within git-tracked files only
-            builtin.grep_string({
-                search = vim.fn.input("Grep > "),
-                cwd = vim.fn.systemlist('git rev-parse --show-toplevel')[1],  -- Set cwd to the git repo root
-            })
-        end, { desc = 'Telescope grep Git files' })
-    end
+    vim.keymap.set('n', '<leader>pf', builtin.find_files, { desc = 'Telescope find files' })
+    vim.keymap.set('n', '<C-p>', builtin.git_files, { desc = 'Telescope find git files' })
+
+    vim.keymap.set('n', '<leader>ps', function()
+      builtin.grep_string({
+        search = vim.fn.input("Grep > "),
+        cwd = vim.fn.systemlist('git rev-parse --show-toplevel')[1], -- Git repo root
+      })
+    end, { desc = 'Telescope grep Git files' })
+    
+    -- Keybinding for undo extension
+    vim.keymap.set('n', '<leader>u', function()
+      require('telescope').extensions.undo.undo()
+    end, { desc = 'Telescope undo' })
+  end
 }
 
