@@ -24,7 +24,7 @@ return {
             require('mason-lspconfig').setup({
                 ensure_installed = {
                     'html', 'htmx', 'cssls', 'pyright', 'rust_analyzer', 
-                    'ts_ls', 'gopls', 'eslint', -- Optional: ESLint for JS/TS linting
+                    'ts_ls', 'gopls', 'eslint', 'tailwindcss', 
                 },
             })
 
