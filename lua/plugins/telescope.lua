@@ -21,6 +21,13 @@ return {
 
         vim.keymap.set('n', '<leader>pf', builtin.find_files, { desc = 'Telescope find files' })
         vim.keymap.set('n', '<C-p>', builtin.git_files, { desc = 'Telescope find git files' })
+        vim.keymap.set('n', '<C-f>', function()
+
+        require('telescope.builtin').find_files({
+            -- Set the search directory to your $HOME or another location
+            cwd = vim.fn.expand('$HOME'),
+        })
+    end, { desc = 'Telescope find files from $HOME' })
 
         vim.keymap.set('n', '<leader>ps', function()
             require('telescope.builtin').live_grep({
